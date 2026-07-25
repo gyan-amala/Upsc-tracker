@@ -1,2 +1,0 @@
-# Upsc-tracker
-Syllabus tracker

@@ -8,6 +8,8 @@ import { LoginView } from '../components/LoginView';
 import { InitialProfileModal } from '../components/InitialProfileModal';
 import { ArrowLeft, BookOpen, CheckCircle2, FileText, LogIn } from 'lucide-react';
 
+import { useSyllabus } from '../context/SyllabusContext';
+
 // Scroll to top helper component
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -80,6 +82,19 @@ const TopicDetailsView: React.FC = () => {
 
 // Layout Component with Sidebar
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { currentUser, authLoading } = useSyllabus();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="flex items-center gap-3 bg-white px-5 py-3.5 rounded-2xl border border-gray-100 shadow-xs">
+          <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-bold text-gray-700">Verifying session...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row antialiased text-gray-900">
       <InitialProfileModal />
@@ -101,12 +116,34 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+// Smart Root Redirect component based on Auth state
+const RootRedirect: React.FC = () => {
+  const { currentUser, authLoading } = useSyllabus();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="flex items-center gap-3 bg-white px-5 py-3.5 rounded-2xl border border-gray-100 shadow-xs">
+          <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-bold text-gray-700">Verifying session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentUser) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Navigate to="/login" replace />;
+};
+
 export const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route path="/login" element={<LoginView />} />
         <Route
           path="/dashboard"

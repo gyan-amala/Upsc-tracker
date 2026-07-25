@@ -169,6 +169,10 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         profileUnsub = onSnapshot(userDocRef, async (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
+            const completedOnboarding = data.hasCompletedOnboarding !== undefined
+              ? !!data.hasCompletedOnboarding
+              : true; // Default to true for existing user documents so logged-in users aren't re-prompted
+
             setUserProfile({
               name: data.name || user.displayName || DEFAULT_USER_PROFILE.name,
               email: data.email || user.email || DEFAULT_USER_PROFILE.email,
@@ -176,7 +180,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               optionalSubject: data.optionalSubject || DEFAULT_USER_PROFILE.optionalSubject,
               dailyStudyTargetHours: data.dailyStudyTargetHours ?? DEFAULT_USER_PROFILE.dailyStudyTargetHours,
               preparationStage: data.preparationStage || DEFAULT_USER_PROFILE.preparationStage,
-              hasCompletedOnboarding: !!data.hasCompletedOnboarding,
+              hasCompletedOnboarding: completedOnboarding,
             });
             if (data.dDayDate) {
               setDDayState(data.dDayDate);
@@ -184,13 +188,13 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           } else {
             // First time cloud initialization for new user profile
             const newCloudProfile = {
-              name: user.displayName || '',
+              name: user.displayName || 'Aspirant',
               email: user.email || '',
               targetAttemptYear: DEFAULT_USER_PROFILE.targetAttemptYear,
               optionalSubject: DEFAULT_USER_PROFILE.optionalSubject,
               dailyStudyTargetHours: DEFAULT_USER_PROFILE.dailyStudyTargetHours,
               preparationStage: DEFAULT_USER_PROFILE.preparationStage,
-              hasCompletedOnboarding: false,
+              hasCompletedOnboarding: true, // Default to true for authenticated users
               dDayDate: '2026-09-18',
               createdAt: new Date().toISOString(),
             };

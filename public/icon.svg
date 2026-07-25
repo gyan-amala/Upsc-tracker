@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3730a3" />
+      <stop offset="50%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Subtle Accent Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2" />
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1.5" />
+
+  <!-- Icon Emblem Group -->
+  <g filter="url(#shadow)" transform="translate(0, -10)">
+    <!-- Graduation Cap / Scholar Emblem -->
+    <!-- Cap Diamond -->
+    <polygon points="256,120 390,185 256,250 122,185" fill="url(#goldGrad)" />
+
+    <!-- Cap Skull Base -->
+    <path d="M 170 210 L 170 265 C 170 295, 342 295, 342 265 L 342 210 Z" fill="#fef3c7" opacity="0.9" />
+
+    <!-- Tassel -->
+    <path d="M 370 195 Q 390 230, 395 270" fill="none" stroke="#fcd34d" stroke-width="6" stroke-linecap="round" />
+    <circle cx="395" cy="275" r="8" fill="#fbbf24" />
+
+    <!-- Open Book / Syllabus Pages -->
+    <g transform="translate(0, 110)">
+      <!-- Left Page -->
+      <path d="M 256 160 C 210 140, 160 145, 120 160 L 120 230 C 160 215, 210 210, 256 230 Z" fill="#ffffff" />
+      <!-- Right Page -->
+      <path d="M 256 160 C 302 140, 352 145, 392 160 L 392 230 C 352 215, 302 210, 256 230 Z" fill="#f8fafc" />
+      <!-- Center Spine -->
+      <line x1="256" y1="160" x2="256" y2="230" stroke="#cbd5e1" stroke-width="3" />
+      <!-- Page Lines -->
+      <line x1="145" y1="180" x2="230" y2="170" stroke="#6366f1" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+      <line x1="145" y1="195" x2="210" y2="187" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+      <line x1="282" y1="170" x2="367" y2="180" stroke="#6366f1" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+      <line x1="302" y1="187" x2="367" y2="195" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+    </g>
+  </g>
+
+  <!-- Text Badge "CSE" -->
+  <text x="256" y="440" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#ffffff" letter-spacing="6" text-anchor="middle" opacity="0.95">CSE MAINS</text>
+</svg>
+

@@ -28,6 +28,23 @@ const DEFAULT_USER_PROFILE: UserProfile = {
   hasCompletedOnboarding: false,
 };
 
+// Helper function to sanitize data for Firestore (replaces undefined with null or recursively cleans objects)
+const sanitizeForFirestore = (obj: any): any => {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj instanceof Date) return obj.toISOString();
+  if (Array.isArray(obj)) return obj.map(sanitizeForFirestore);
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    result[key] = value === undefined ? null : sanitizeForFirestore(value);
+  }
+  return result;
+};
+
+const safeSetDoc = (reference: any, data: any, options?: any) => {
+  return setDoc(reference, sanitizeForFirestore(data), options);
+};
+
 const getDateOffsetString = (daysAgo: number): string => {
   const d = new Date();
   d.setDate(d.getDate() - daysAgo);
@@ -198,7 +215,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               dDayDate: '2026-09-18',
               createdAt: new Date().toISOString(),
             };
-            await setDoc(userDocRef, newCloudProfile).catch(console.error);
+            await safeSetDoc(userDocRef, newCloudProfile).catch(console.error);
           }
         }, (error) => {
           console.error('Firestore user profile listener error:', error);
@@ -258,7 +275,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           archivedAt: goal.archivedAt || nowISO,
         };
         if (currentUser) {
-          setDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), archivedGoal, { merge: true }).catch(console.error);
+          safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), archivedGoal, { merge: true }).catch(console.error);
         }
         return archivedGoal;
       }
@@ -362,7 +379,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setUserProfile((prev) => {
       const updated = { ...prev, ...profileUpdates };
       if (currentUser) {
-        setDoc(doc(db, 'users', currentUser.uid), updated, { merge: true }).catch(console.error);
+        safeSetDoc(doc(db, 'users', currentUser.uid), updated, { merge: true }).catch(console.error);
       }
       return updated;
     });
@@ -371,7 +388,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setDDayDate = (date: string) => {
     setDDayState(date);
     if (currentUser) {
-      setDoc(doc(db, 'users', currentUser.uid), { dDayDate: date }, { merge: true }).catch(console.error);
+      safeSetDoc(doc(db, 'users', currentUser.uid), { dDayDate: date }, { merge: true }).catch(console.error);
     }
   };
 
@@ -388,7 +405,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setDailyGoals((prev) => [newGoal, ...prev]);
 
     if (currentUser) {
-      setDoc(doc(db, 'users', currentUser.uid, 'goals', newGoal.id), newGoal).catch(console.error);
+      safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', newGoal.id), newGoal).catch(console.error);
     }
   };
 
@@ -404,7 +421,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         };
 
         if (currentUser) {
-          setDoc(doc(db, 'users', currentUser.uid, 'goals', id), updatedGoal, { merge: true }).catch(console.error);
+          safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', id), updatedGoal, { merge: true }).catch(console.error);
         }
 
         return updatedGoal;
@@ -430,7 +447,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         };
 
         if (currentUser) {
-          setDoc(doc(db, 'users', currentUser.uid, 'goals', id), updatedGoal, { merge: true }).catch(console.error);
+          safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', id), updatedGoal, { merge: true }).catch(console.error);
         }
 
         return updatedGoal;
@@ -445,7 +462,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!goal.archived && goal.completed) {
           const updated = { ...goal, archived: true, archivedAt: now };
           if (currentUser) {
-            setDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), updated, { merge: true }).catch(console.error);
+            safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), updated, { merge: true }).catch(console.error);
           }
           return updated;
         }
@@ -461,7 +478,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!goal.archived) {
           const updated = { ...goal, archived: true, archivedAt: now };
           if (currentUser) {
-            setDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), updated, { merge: true }).catch(console.error);
+            safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', goal.id), updated, { merge: true }).catch(console.error);
           }
           return updated;
         }
@@ -480,7 +497,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           archivedAt: undefined,
         };
         if (currentUser) {
-          setDoc(doc(db, 'users', currentUser.uid, 'goals', id), updated, { merge: true }).catch(console.error);
+          safeSetDoc(doc(db, 'users', currentUser.uid, 'goals', id), updated, { merge: true }).catch(console.error);
         }
         return updated;
       })
@@ -556,7 +573,7 @@ export const SyllabusProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       pyqStatusesObj[q.id] = !!q.completed;
     });
 
-    setDoc(doc(db, 'users', currentUser.uid, 'syllabusProgress', mt.id), {
+    safeSetDoc(doc(db, 'users', currentUser.uid, 'syllabusProgress', mt.id), {
       microthemeId: mt.id,
       milestones: mt.progress,
       userNotes: mt.notes || '',

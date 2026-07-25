@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GraduationCap, AlertCircle, ArrowRight, Cloud, Sparkles } from 'lucide-react';
 import { useSyllabus } from '../context/SyllabusContext';
 
 export const LoginView: React.FC = () => {
   const navigate = useNavigate();
-  const { signInWithGoogle, currentUser, logoutUser } = useSyllabus();
+  const { signInWithGoogle, currentUser, logoutUser, authLoading } = useSyllabus();
 
   const [errors, setErrors] = useState<{ general?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auto-redirect logged-in users directly to dashboard
+  useEffect(() => {
+    if (!authLoading && currentUser) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [currentUser, authLoading, navigate]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="flex items-center gap-3 bg-white px-5 py-3.5 rounded-2xl border border-gray-100 shadow-xs">
+          <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-bold text-gray-700">Verifying session...</span>
+        </div>
+      </div>
+    );
+  }
 
   const handleGoogleSignIn = async () => {
     setIsSubmitting(true);

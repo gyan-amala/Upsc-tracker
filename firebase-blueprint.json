@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "User profile data including target year, study hours, optional subject.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "targetAttemptYear": { "type": "string" },
+        "dailyStudyTargetHours": { "type": "number" },
+        "optionalSubject": { "type": "string" },
+        "preparationStage": { "type": "string" },
+        "examDate": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "goals": {
+      "title": "Study Goal",
+      "description": "Daily and weekly targets for preparation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "paper": { "type": "string" },
+        "date": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "completedAt": { "type": "string" },
+        "archived": { "type": "boolean" },
+        "archivedAt": { "type": "string" }
+      },
+      "required": ["title", "completed"]
+    },
+    "syllabusProgress": {
+      "title": "Syllabus Progress",
+      "description": "Progress state for syllabus topics",
+      "type": "object",
+      "properties": {
+        "topicId": { "type": "string" },
+        "status": { "type": "string" },
+        "milestones": { "type": "object" },
+        "userNotes": { "type": "string" },
+        "referenceSources": { "type": "array", "items": { "type": "string" } },
+        "pyqStatuses": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["topicId"]
+    }
+  }
+}

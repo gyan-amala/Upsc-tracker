@@ -1,0 +1,6 @@
+{
+  "name": "UPSC CSE Mains Tracker",
+  "description": "A comprehensive tracking tool for UPSC Civil Services Mains syllabus, Ethics (GS IV), answer writing practice, and revision management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

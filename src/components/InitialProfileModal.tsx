@@ -14,10 +14,10 @@ import {
 } from 'lucide-react';
 
 export const InitialProfileModal: React.FC = () => {
-  const { userProfile, updateUserProfile, dDayDate, setDDayDate } = useSyllabus();
+  const { userProfile, updateUserProfile, dDayDate, setDDayDate, currentUser } = useSyllabus();
 
   const [formData, setFormData] = useState({
-    name: userProfile.name || '',
+    name: userProfile.name || (currentUser?.displayName ?? ''),
     targetAttemptYear: userProfile.targetAttemptYear || '2026',
     optionalSubject: userProfile.optionalSubject || 'Geography',
     dailyStudyTargetHours: userProfile.dailyStudyTargetHours || 8,
@@ -27,10 +27,17 @@ export const InitialProfileModal: React.FC = () => {
   const [selectedDDay, setSelectedDDay] = useState(dDayDate || '2026-09-18');
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Show modal only if onboarding is NOT completed
-  if (userProfile.hasCompletedOnboarding) {
+  // Hide modal if onboarding is completed or if user is already logged in with an active profile
+  if (userProfile.hasCompletedOnboarding || (currentUser && userProfile.name)) {
     return null;
   }
+
+  const handleSkip = () => {
+    updateUserProfile({
+      name: formData.name.trim() || currentUser?.displayName || 'Aspirant',
+      hasCompletedOnboarding: true,
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,10 +223,17 @@ export const InitialProfileModal: React.FC = () => {
           </div>
 
           {/* Submit Action */}
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="w-full sm:w-1/3 py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-all cursor-pointer text-center"
+            >
+              Skip to Dashboard
+            </button>
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-2/3 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Save Profile &amp; Start Preparation</span>
